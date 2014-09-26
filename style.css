@@ -1,0 +1,66 @@
+#layerslider_1 {
+	display:none;
+}
+
+#zaproszenie {
+	width:1000px;
+	margin:0 auto;
+	margin-bottom:150px;
+	line-height:100%;
+	text-align:center;
+	height:0;
+}
+
+.wyszukuje {
+	
+}
+
+#status {
+	position:fixed;
+	left:0;
+	top:32px;
+	display:block;
+	background:#000;
+	color:#080;
+	z-index:10000000;
+	padding:20px;
+}
+
+#status:first-line {
+	color:#0f0;
+	font-weight:700;
+}
+
+#geolokalizacja, #przeslij {
+	float:left;
+	width:25%;
+}
+
+#placowkiwrap, #placowka, #placowka2 {
+	width:50%;
+	float:left;
+}
+
+#placowka, #placowka2 {
+	font-size:11px;
+}
+
+#placowka:first-line, 
+#placowka2:first-line {
+	font-weight:700;
+	font-size:16px;
+}
+
+#geolokalizacja label {
+	display:block;
+}
+
+#geolokalizacja input,
+#przeslij input  {
+	margin-bottom:5px;
+	width:80%;
+}
+
+#przeslij span{
+	display:block;
+}
