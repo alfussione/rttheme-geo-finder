@@ -25,40 +25,49 @@ return '
 <div id="zaproszenie">
 
 <div id="geolokalizacja">
-<p>
-<span id="twojaLokalizacja">Twoja<span class="przyblizona"> </span>lokalizacja: <BR /></span>
-<span id="twojeMiasto"><span class="wyszukuje">wyszukuję...</span></span>
-<span id="twojeKoordynaty"></span>
-</p>
+	<p>
+		<span id="twojaLokalizacja">Twoja<span class="przyblizona"> </span>lokalizacja: <BR /></span>
+		<span id="twojeMiasto"><span class="wyszukuje">wyszukuję...</span></span>
+		<span id="twojeKoordynaty"></span>
+	</p>
 
-<label>
-<span>Inna miejscowość? Wpisz poniżej:</span>
-<input type="text" id="wlasnemiasto"><BR />
-<input type="button" value="znajdź" id="znajdzmiasto">
-</label>
+	<label>
+		<span>Inna miejscowość? Wpisz poniżej:</span>
+		<input type="text" id="wlasnemiasto"><BR />
+		<input type="button" value="znajdź" id="znajdzmiasto">
+	</label>
 </div>
 
 <div id="placowkiwrap">
-<p id="placowkitext"></p>
-<p id="placowka"></p>
-<p id="placowka2"></p>
+	<p id="placowkitext"></p>
+	<p class="placowka"></p>
+	<p class="placowka2"></p>
 </div>
 
 <div id="przeslij">
-<span><b>Pobierz naszą wizytówkę</b><BR /></span>
-<label>
-<span>wpisz swoje imię:</span>
-<input type="text" id="przeslijimie">
-</label>
 
-<label>
-<span>oraz adres email:</span>
-<input type="text" id="przeslijemail">
-</label>
+	<form name="formularz" id="geoformularz" method="post" action="">
 
-<label>
-<input type="button" value="prześlij" id="przeslijprzycisk">
-</label>
+		<textarea class="text-placowka" name="geoplace"></textarea>
+		<textarea class="text-placowka2" name="geoplace2"></textarea>
+
+
+		<span><b>Pobierz naszą wizytówkę</b><BR /></span>
+		<label>
+		<span>wpisz swoje imię:</span>
+		<input type="text" name="geoimie" id="przeslijimie">
+		</label>
+
+		<label>
+		<span>oraz adres email:</span>
+		<input type="text" name="geoemail" id="przeslijemail">
+		</label>
+
+		<label>
+		<input type="submit" value="prześlij" id="przeslijprzycisk">
+		</label>
+
+	</form>
 
 </div>
 
@@ -135,9 +144,62 @@ foreach ($cala_zawartosc as $element) {
 } //foreach
 
 
+// zakoduj do json po pobraniu
 $file = 'bazaplacowek.json';
 file_put_contents($file, json_encode($json_elementow));
 
+
+// formularz
+
+if(isset($_POST['geoemail'])) {
+	$odbiorca = $_post['geoemail'];
+	$temat = "DAIGLOB.PL - wizytówka";
+
+	function niepoprawne($blad) {
+		echo "Wystąpił błąd: <br />";
+		echo $blad;
+		echo "<br /> Spróbuj ponownie. Jeśli to nie pomoże skontaktuj się z nami przez standardowy formularz.";
+		die();
+		//wstaw powrót
+	}
+
+	if(!isset($_POST['geoimie']) || !isset($_POST['geoemail']) || !isset($_POST['geoplace'])) niepoprawne("- błąd z formularzem");
+
+	$imie = $_POST['geoimie'];
+	$email = $_POST['geoemail'];
+	$placowka = nl2br(htmlspecialchars($_POST['geoplace']));
+	$placowka2 = nl2br(htmlspecialchars($_POST['geoplace2']));
+
+	$wiadomoscbledu = "";
+	$email_wzor = '/^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/';
+	$imie_wzor = "/^[A-Za-z .'-]+$/";
+
+
+ 	if(!preg_match($email_wzor,$email)) {
+ 		$wiadomoscbledu .= '- email wydaje się być niepoprawny <br />';
+ 	}
+ 	if(!preg_match($imie_wzor,$imie)) {
+ 		$wiadomoscbledu .= '- wpisane imię jest niepoprawne <br />';
+ 	}
+ 	if(strlen($placowka) == 0) {
+ 		$wiadomoscbledu .= '- nie wykryto placówki - proszę się upewnić, że wyświetlono najbliższe oddziały <br />';
+ 	}
+	if(strlen($wiadomoscbledu) > 0) {
+		niepoprawne($wiadomoscbledu);
+	}
+
+	$tresc_wizytowki = "Dzień dobry! <BR /><BR />Oto dane, o które prosiłeś:<BR /><BR />".$placowka."<BR /><BR />".$placowka2."<BR /><BR />Pozdrawiamy,<BR />DAIGLOB FINANCE";
+
+$headers = "From: DAIGLOB <daiglob@telvinet.pl>\r\n";
+$headers .= "Reply-To:biuro@daiglob.pl\r\n";
+$headers .= "MIME-Version: 1.0\r\n";
+$headers .= "Content-Type: text/html; charset=utf-8\r\n";
+$headers .= "Content-Transfer-Encoding: 8bit\r\n";
+
+	@mail($email, $temat, $tresc_wizytowki, $headers);  
+	 
+	echo "NIBY WSZYSTKO OK";
+}
 
 ?>
 

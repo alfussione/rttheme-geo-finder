@@ -223,15 +223,17 @@ function liczDystans(lat,lon) {
 
 						if (data[j].id == idnajblizej) {
 
-					 			$('#placowka').html(" ");
-					 			$('#placowka2').html(" ");
+					 			$('.placowka').html(" ");
+					 			$('.placowka2').html(" ");
 
 								for (linieadresu = 0; linieadresu < data[j][idnajblizej][1].length; linieadresu++) {
-										$("#placowka").append(data[j][idnajblizej][1][linieadresu] + "<br />");
+										$(".placowka").append(data[j][idnajblizej][1][linieadresu] + "<br />");
+										$(".text-placowka").append(data[j][idnajblizej][1][linieadresu] + "\r\n");
 								}
 								if (data[j][idnajblizej][2]) {
 										for (linieadresu = 0; linieadresu < data[j][idnajblizej][2].length; linieadresu++) {
-												$("#placowka2").append(data[j][idnajblizej][2][linieadresu] + "<br />");
+												$(".placowka2").append(data[j][idnajblizej][2][linieadresu] + "<br />");
+												$(".text-placowka2").append(data[j][idnajblizej][2][linieadresu] + "\r\n");
 										}
 								}
 						}

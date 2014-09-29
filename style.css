@@ -5,7 +5,7 @@
 #zaproszenie {
 	width:1000px;
 	margin:0 auto;
-	margin-bottom:150px;
+	margin-bottom:200px;
 	line-height:100%;
 	text-align:center;
 	height:0;
@@ -36,17 +36,17 @@
 	width:25%;
 }
 
-#placowkiwrap, #placowka, #placowka2 {
+#placowkiwrap, .placowka, .placowka2 {
 	width:50%;
 	float:left;
 }
 
-#placowka, #placowka2 {
+.placowka, .placowka2 {
 	font-size:11px;
 }
 
-#placowka:first-line, 
-#placowka2:first-line {
+.placowka:first-line, 
+.placowka2:first-line {
 	font-weight:700;
 	font-size:16px;
 }
@@ -63,4 +63,9 @@
 
 #przeslij span{
 	display:block;
+}
+
+.text-placowka,
+.text-placowka2 {
+	display:none;
 }
