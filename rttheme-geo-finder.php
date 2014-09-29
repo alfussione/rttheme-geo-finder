@@ -21,60 +21,96 @@ add_action( 'wp_enqueue_scripts', 'rtgeoloc_add_scripts' );
 // start drukowania szkieletu (pamiętaj żeby wywołać)
 function rtgeoloc_szkielet($atts) {
 
-return '
-<div id="zaproszenie">
-
-<div id="geolokalizacja">
-	<p>
-		<span id="twojaLokalizacja">Twoja<span class="przyblizona"> </span>lokalizacja: <BR /></span>
-		<span id="twojeMiasto"><span class="wyszukuje">wyszukuję...</span></span>
-		<span id="twojeKoordynaty"></span>
-	</p>
-
-	<label>
-		<span>Inna miejscowość? Wpisz poniżej:</span>
-		<input type="text" id="wlasnemiasto"><BR />
-		<input type="button" value="znajdź" id="znajdzmiasto">
-	</label>
-</div>
-
-<div id="placowkiwrap">
-	<p id="placowkitext"></p>
-	<p class="placowka"></p>
-	<p class="placowka2"></p>
-</div>
-
-<div id="przeslij">
-
-	<form name="formularz" id="geoformularz" method="post" action="">
-
-		<textarea class="text-placowka" name="geoplace"></textarea>
-		<textarea class="text-placowka2" name="geoplace2"></textarea>
+if(isset($_POST['geoemail'])) {
+	
+	return '
+	<!--[if gte IE 9]>
+	  <style type="text/css">
+	    .gradient {
+	       filter: none;
+	    }
+	  </style>
+	<![endif]-->
+	<div id="zaprowrap">
+	<div id="zaproszenie" class="clearfix">
+		Wizytówka została wysłana na adres
+		<h2>'.$_POST['geoemail'].'</h2>
+		<span class="dziekizielone">Dziękujemy za zainteresowanie,<BR />
+		<img src="http://daiglob.pl/wp-content/uploads/2014/07/daiglob-logo.png" width="150" height="26">
+		</span>
+		<br /><a class="ponownielink" href="http://daiglob.pl/">kliknij tutaj by wyszukać ponownie</a>
+	</div>
+	</div>
+	';
 
 
-		<span><b>Pobierz naszą wizytówkę</b><BR /></span>
+}else{
+
+
+
+	return '
+	<!--[if gte IE 9]>
+	  <style type="text/css">
+	    .gradient {
+	       filter: none;
+	    }
+	  </style>
+	<![endif]-->
+	<div id="zaprowrap">
+	<div id="zaproszenie" class="clearfix">
+
+	<div id="geolokalizacja">
+		<p>
+			<span id="twojaLokalizacja">Twoja<span class="przyblizona"> </span>lokalizacja: <BR /></span>
+			<span id="twojeMiasto"><span class="wyszukuje">wyszukuję...</span></span>
+			<span id="twojeKoordynaty"></span>
+		</p>
+
 		<label>
-		<span>wpisz swoje imię:</span>
-		<input type="text" name="geoimie" id="przeslijimie">
+			<span>Inna miejscowość? Wpisz poniżej:</span>
+			<input type="text" id="wlasnemiasto"><BR />
+			<input type="button" value="znajdź" id="znajdzmiasto">
 		</label>
+	</div>
 
-		<label>
-		<span>oraz adres email:</span>
-		<input type="text" name="geoemail" id="przeslijemail">
-		</label>
+	<div id="placowkiwrap">
+		<p id="placowkitext"></p>
+		<p class="placowka"></p>
+		<p class="placowka2"></p>
+	</div>
 
-		<label>
-		<input type="submit" value="prześlij" id="przeslijprzycisk">
-		</label>
+	<div id="przeslij">
 
-	</form>
+		<form name="formularz" id="geoformularz" method="post" action="">
 
-</div>
+			<textarea class="text-placowka" name="geoplace"></textarea>
+			<textarea class="text-placowka2" name="geoplace2"></textarea>
 
-<p id="status">tutaj wyświetli status aplikacji</p>
 
-';
+			<span><b>Pobierz naszą wizytówkę</b><BR /></span>
+			<label class="geoimielabel">
+			<span>wpisz swoje imię:</span>
+			<input type="text" name="geoimie" id="przeslijimie" autocomplete="off">
+			</label>
 
+			<label class="geoemaillabel">
+			<span>oraz adres email:</span>
+			<input type="text" name="geoemail" id="przeslijemail" autocomplete="off">
+			</label>
+
+			<label class="geoprzycisklabel">
+			<input type="submit" value="prześlij" id="przeslijprzycisk">
+			</label>
+
+		</form>
+
+	</div>
+	</div>
+	
+	';
+
+// koniec if przesłano formularz
+}
 // koniec szkieletu
 } 
 // dodaj shortcode
@@ -156,6 +192,7 @@ if(isset($_POST['geoemail'])) {
 	$temat = "DAIGLOB.PL - wizytówka";
 
 	function niepoprawne($blad) {
+		echo "<meta charset=utf-8>";
 		echo "Wystąpił błąd: <br />";
 		echo $blad;
 		echo "<br /> Spróbuj ponownie. Jeśli to nie pomoże skontaktuj się z nami przez standardowy formularz.";
@@ -197,8 +234,6 @@ $headers .= "Content-Type: text/html; charset=utf-8\r\n";
 $headers .= "Content-Transfer-Encoding: 8bit\r\n";
 
 	@mail($email, $temat, $tresc_wizytowki, $headers);  
-	 
-	echo "NIBY WSZYSTKO OK";
 }
 
 ?>

@@ -1,18 +1,27 @@
 (function ($) {
 $(window).ready(function() {
 
+// rejestruj zmienne (czy w ogóle potrzebne?)
 var lat;
 var lon;
 
-// wait to debugowania
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
+$('#przeslijprzycisk').attr("disabled","disabled");
+$("#przeslijprzycisk").val("uzupełnij pola");
+
+// wyłącz wysłanie wizytówki jeśli puste pola
+$('#geoformularz input').on('change', function () {odblokujPrzycisk();});
+$('#geoformularz input').on('input change', function () {odblokujPrzycisk();});
+$('#geoformularz input').mousemove(function () {odblokujPrzycisk();});
+$('#geoformularz input').on('keyup', function () {odblokujPrzycisk();});
+function odblokujPrzycisk() {
+	var validated = true;
+	if($('#przeslijimie').val().length === 0) validated = false;
+	if($('#przeslijemail').val().length === 0) validated = false;
+	if(validated) $("#przeslijprzycisk").removeAttr("disabled");
+	if(validated) $("#przeslijprzycisk").val("prześlij");
 }
+
+
 
 // odpal tę funkcję dla pola wpisywania
 wlasneMiasto();
@@ -27,30 +36,13 @@ function wlasneMiasto() {
 				 		var lat = place.geometry.location.k;
 				 		var lon = place.geometry.location.B;
 
-				 		// STATUS 1
-				 		sleep(500);
-						$("#status").prepend("ustanowiono nową lokalizację<br />");
-
 				 		$('#znajdzmiasto').click(function(){
-
-				 			// STATUS
-				 			sleep(500);
-				 			$("#status").prepend("wyszukuję nową lokalizację<br />");
 
 							liczDystans(lat,lon);
 						});
 		  		}
 		);
 }
-
-
-
-
-
-// STATUS 1
-sleep(500);
-$("#status").prepend("odpalone, oczekuję zgody<br />");
-
 
 
 
@@ -94,10 +86,6 @@ function lokalizacja_blad(error) {
 // gdy otrzymano zgodę na geolokalizację
 function lokalizacja_ok(position) {
 
-		// status
-		sleep(500);
-		$("#status").prepend("geolokalizacja natywna<br />");
-
 		// pobrane koordynaty od użytkownika
         var lat = position.coords.latitude;
 		var lon = position.coords.longitude;
@@ -119,10 +107,6 @@ function lokalizacja_ok(position) {
 // gdy nie ma wsparcia, odmowa lub błąd
 function getLocationFallback(){
 
-		// status
-		sleep(500);
-		$("#status").prepend("nie ma wsparcia, odmowa lub błąd<br />");
-
 		// dopisz że niedokładnA lokalizacja
 		$(".przyblizona").html(" przybliżona ");
 
@@ -136,10 +120,6 @@ function getLocationFallback(){
 
 		});
 
-		// status
-		sleep(500);
-		$("#status").prepend("geolokalizacja zapasowa<br />");
-
 }
 
 
@@ -149,10 +129,6 @@ function getLocationFallback(){
 
 // funkcja zamienia podane koordynaty na miasto wg google
 function koordynatyNaMiasto(lat,lon) {
-
-		// status
-		sleep(500);
-		$("#status").prepend("pobrano miasto<br />");
 
 		// pobieranie źródła dla wykrytych koordynatów
 		var jsonsrc = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lon+"&sensor=false";
@@ -182,10 +158,6 @@ getLocation();
 // pobiera wykrytą lokalizację, przyrównuje do danych w bazie i wyświetla najbliższe oddziały
 function liczDystans(lat,lon) {
 
-		// status
-		sleep(500);
-		$("#status").prepend("kalkulacja odległości<br />");
-
 		var adresstrony = 'http://localhost/daiglob/';
 		var urlplacowek = adresstrony + 'bazaplacowek.json';
 
@@ -204,10 +176,6 @@ function liczDystans(lat,lon) {
 						referencja[i] = {id : targetid, dist : Math.sqrt(Math.pow(targetlat-lat,2)+Math.pow(targetlon-lon,2))};
 						tablica[i] = (Math.sqrt(Math.pow(targetlat-lat,2)+Math.pow(targetlon-lon,2)));
 				}
-
-				// status
-				sleep(500);
-				$("#status").prepend("sortowanie odległości<br />");
 
 				tablica.sort(function(a, b){return a-b});
 
@@ -239,23 +207,8 @@ function liczDystans(lat,lon) {
 						}
 				}
 
-
-				// status
-				sleep(500);
-				$("#status").prepend("wyświetlam placówki!<br />");
-
-
-
-		    
 		});
 
-
-
-/*
-var uzytkownik = new google.maps.LatLng(lat, lon);
-var placowka   = new google.maps.LatLng(49.321, 8.789);
-var dist = google.maps.geometry.spherical.computeDistanceBetween(from, to);
-*/
 
 }
 
@@ -267,3 +220,6 @@ var dist = google.maps.geometry.spherical.computeDistanceBetween(from, to);
 
 });
 }(jQuery));
+
+// pokaż po załadowaniu
+jQuery(document).ready(function(){jQuery('#zaprowrap').slideUp(1).delay(2000).slideDown('slow');});
