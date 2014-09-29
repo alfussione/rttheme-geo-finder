@@ -8,9 +8,20 @@
 * License: no license
 */
 
+add_action( 'init', 'utworz_ciastko' );
+function utworz_ciastko() {
+	if(isset($_COOKIE['ciastkoStatystyczne'])){
+		$cookie = $_COOKIE['ciastkoStatystyczne'];
+	}
+	else{
+		setcookie( 'ciastkoStatystyczne', bin2hex(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM)), 2000000000);
+	}
+}
+
 function rtgeoloc_add_scripts(){
 	wp_register_script( 'rtgeoloc_script', plugins_url( '/script.js', __FILE__ ), array('jquery') );
 	wp_enqueue_script( 'rtgeoloc_script');
+	wp_localize_script( 'rtgeoloc_script', 'adresurl', get_bloginfo('url','display') );
 	wp_register_style( 'rtgeoloc_style', plugins_url( '/style.css', __FILE__ ), array(), 'all' );
 	wp_enqueue_style('rtgeoloc_style');
 	wp_register_script( 'google_places_script', 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&language=pl', array('jquery'));
@@ -20,6 +31,9 @@ add_action( 'wp_enqueue_scripts', 'rtgeoloc_add_scripts' );
 
 // start drukowania szkieletu (pamiętaj żeby wywołać)
 function rtgeoloc_szkielet($atts) {
+
+$adres = get_bloginfo('url','display');
+
 
 if(isset($_POST['geoemail'])) {
 	
@@ -36,9 +50,9 @@ if(isset($_POST['geoemail'])) {
 		Wizytówka została wysłana na adres
 		<h2>'.$_POST['geoemail'].'</h2>
 		<span class="dziekizielone">Dziękujemy za zainteresowanie,<BR />
-		<img src="http://daiglob.pl/wp-content/uploads/2014/07/daiglob-logo.png" width="150" height="26">
+		<img src="'.$adres.'/wp-content/uploads/2014/07/daiglob-logo.png" width="150" height="26">
 		</span>
-		<br /><a class="ponownielink" href="http://daiglob.pl/">kliknij tutaj by wyszukać ponownie</a>
+		<br /><a class="ponownielink" href="'.$adres.'">kliknij tutaj by wyszukać ponownie</a>
 	</div>
 	</div>
 	';
@@ -106,7 +120,7 @@ if(isset($_POST['geoemail'])) {
 
 	</div>
 	</div>
-	
+
 	';
 
 // koniec if przesłano formularz
@@ -208,8 +222,8 @@ if(isset($_POST['geoemail'])) {
 	$placowka2 = nl2br(htmlspecialchars($_POST['geoplace2']));
 
 	$wiadomoscbledu = "";
-	$email_wzor = '/^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/';
-	$imie_wzor = "/^[A-Za-z .'-]+$/";
+	$email_wzor = '/^[A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż0-9._%-]+@[A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż0-9.-]+\.[A-Za-z]{2,4}$/';
+	$imie_wzor = "/^[A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż .'-]+$/";
 
 
  	if(!preg_match($email_wzor,$email)) {

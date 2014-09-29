@@ -6,7 +6,8 @@ var lat;
 var lon;
 
 $('#przeslijprzycisk').attr("disabled","disabled");
-$("#przeslijprzycisk").val("uzupełnij pola");
+
+$("#przeslijprzycisk").val("najpierw wybierz oddział");
 
 // wyłącz wysłanie wizytówki jeśli puste pola
 $('#geoformularz input').on('change', function () {odblokujPrzycisk();});
@@ -14,11 +15,11 @@ $('#geoformularz input').on('input change', function () {odblokujPrzycisk();});
 $('#geoformularz input').mousemove(function () {odblokujPrzycisk();});
 $('#geoformularz input').on('keyup', function () {odblokujPrzycisk();});
 function odblokujPrzycisk() {
-	var validated = true;
-	if($('#przeslijimie').val().length === 0) validated = false;
-	if($('#przeslijemail').val().length === 0) validated = false;
-	if(validated) $("#przeslijprzycisk").removeAttr("disabled");
-	if(validated) $("#przeslijprzycisk").val("prześlij");
+		var validated = true;
+		if($('#przeslijimie').val().length === 0) validated = false;
+		if($('#przeslijemail').val().length === 0) validated = false;
+		if(validated) $("#przeslijprzycisk").removeAttr("disabled");
+		if(validated) $("#przeslijprzycisk").val("prześlij");
 }
 
 
@@ -38,7 +39,7 @@ function wlasneMiasto() {
 
 				 		$('#znajdzmiasto').click(function(){
 
-							liczDystans(lat,lon);
+								liczDystans(lat,lon);
 						});
 		  		}
 		);
@@ -58,11 +59,10 @@ miganie();
 
 
 
-
 // podstawowa lokalizacja funkcja
 function getLocation() {
 	    if (navigator.geolocation) {
-	        navigator.geolocation.getCurrentPosition(lokalizacja_ok, lokalizacja_blad);
+	        navigator.geolocation.getCurrentPosition(lokalizacja_ok, lokalizacja_blad, {enableHighAccuracy:true, timeout:15000, maximumAge:3600000});
 	    } else {
 	        getLocationFallback();
 	    }
@@ -97,7 +97,6 @@ function lokalizacja_ok(position) {
 		$("#twojeKoordynaty").html("(" + lat.toFixed(2) + ", " + lon.toFixed(2) + ")");
 
 }
-
 
 
 
@@ -158,7 +157,7 @@ getLocation();
 // pobiera wykrytą lokalizację, przyrównuje do danych w bazie i wyświetla najbliższe oddziały
 function liczDystans(lat,lon) {
 
-		var adresstrony = 'http://localhost/daiglob/';
+		var adresstrony = adresurl + '/';
 		var urlplacowek = adresstrony + 'bazaplacowek.json';
 
 		$.getJSON(urlplacowek).then(function(data) {
@@ -207,6 +206,8 @@ function liczDystans(lat,lon) {
 						}
 				}
 
+				$("#przeslijprzycisk").val("uzupełnij powyższe pola");
+
 		});
 
 
@@ -215,11 +216,10 @@ function liczDystans(lat,lon) {
 
 
 
-
-
-
 });
 }(jQuery));
+
+
 
 // pokaż po załadowaniu
 jQuery(document).ready(function(){jQuery('#zaprowrap').slideUp(1).delay(2000).slideDown('slow');});

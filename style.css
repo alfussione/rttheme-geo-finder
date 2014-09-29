@@ -7,6 +7,8 @@
 	min-height:140px;
 }
 
+
+
 .wyszukuje {
 	
 }
@@ -19,6 +21,8 @@
 	float:left;
 	width:25%;
 }
+
+
 
 #placowkiwrap, .placowka, .placowka2 {
 	width:50%;
@@ -67,6 +71,10 @@
 	background: #ccc;
 }
 
+#zaproszenie input[disabled=disabled] {
+	opacity:0.5;
+}
+
 #zaprowrap {
 	display:none;
 	width:100%;
@@ -80,4 +88,25 @@ background: -o-linear-gradient(top, #ffffff 0%,#ededed 100%); /* Opera 11.10+ */
 background: -ms-linear-gradient(top, #ffffff 0%,#ededed 100%); /* IE10+ */
 background: linear-gradient(to bottom, #ffffff 0%,#ededed 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-8 */
+}
+
+@media (max-width:960px) {
+	#zaproszenie {
+		width:100%;
+	}
+	#geolokalizacja, #placowkiwrap, #przeslij {
+		clear:both;
+		display:block;
+		float:none;
+		width:100%;
+	}
+	#geolokalizacja, #placowkiwrap {
+		margin-bottom:5px;
+	}
+}
+
+@media (max-width: 760px) {
+	header#header {
+		height:auto;
+	}
 }
