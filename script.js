@@ -4,6 +4,7 @@ $(window).ready(function() {
 // rejestruj zmienne (czy w ogóle potrzebne?)
 var lat;
 var lon;
+var typlokalizacji;
 
 $('#przeslijprzycisk').attr("disabled","disabled");
 
@@ -33,14 +34,15 @@ function wlasneMiasto() {
 			    (document.getElementById('wlasnemiasto')),
 			    { types: ['(cities)'],componentRestrictions: {country: "pl"} });
 			 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
+
+			 			//określ typ lokalizacji;
+						typlokalizacji = "ręczna";
+						console.log(typlokalizacji);
+
 				 		var place = autocomplete.getPlace();
 				 		var lat = place.geometry.location.k;
 				 		var lon = place.geometry.location.B;
-
-				 		$('#znajdzmiasto').click(function(){
-
-								liczDystans(lat,lon);
-						});
+				 		liczDystans(lat,lon);
 		  		}
 		);
 }
@@ -86,6 +88,10 @@ function lokalizacja_blad(error) {
 // gdy otrzymano zgodę na geolokalizację
 function lokalizacja_ok(position) {
 
+		//określ typ lokalizacji;
+		typlokalizacji = "dokładna";
+		console.log(typlokalizacji);
+
 		// pobrane koordynaty od użytkownika
         var lat = position.coords.latitude;
 		var lon = position.coords.longitude;
@@ -106,7 +112,11 @@ function lokalizacja_ok(position) {
 // gdy nie ma wsparcia, odmowa lub błąd
 function getLocationFallback(){
 
-		// dopisz że niedokładnA lokalizacja
+		//określ typ lokalizacji;
+		typlokalizacji = "przybliżona";
+		console.log(typlokalizacji);
+
+		// dopisz że niedokładna lokalizacja
 		$(".przyblizona").html(" przybliżona ");
 
 		// fallback = lokalizacja z adresu ip
@@ -166,7 +176,7 @@ function liczDystans(lat,lon) {
 				var tablica = [];
 				var idnajblizej;
 
-				for(var i=0;i<data.length;i++){
+				for(var i=0;i<data.length-1;i++){
 
 						var targetlat = data[i].gpslat;
 						var targetlon = data[i].gpslon;
@@ -178,7 +188,7 @@ function liczDystans(lat,lon) {
 
 				tablica.sort(function(a, b){return a-b});
 
-				for(var i=0;i<tablica.length;i++){
+				for(var i=0;i<tablica.length-1;i++){
 						if (tablica[0] == referencja[i].dist) {
 							idnajblizej = referencja[i].id;
 						}
@@ -186,12 +196,14 @@ function liczDystans(lat,lon) {
 
 				$("#placowkitext").html("Najbliższe oddziały dla tej lokalizacji:");
 
-				for(var j=0;j<data.length;j++){
+				for(var j=0;j<data.length-1;j++){
 
 						if (data[j].id == idnajblizej) {
 
 					 			$('.placowka').html(" ");
 					 			$('.placowka2').html(" ");
+					 			$('.text-placowka').html(" ");
+					 			$('.text-placowka2').html(" ");
 
 								for (linieadresu = 0; linieadresu < data[j][idnajblizej][1].length; linieadresu++) {
 										$(".placowka").append(data[j][idnajblizej][1][linieadresu] + "<br />");
@@ -213,8 +225,7 @@ function liczDystans(lat,lon) {
 
 }
 
-
-
+console.log(idwizyty);
 
 });
 }(jQuery));
