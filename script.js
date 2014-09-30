@@ -4,7 +4,6 @@ $(window).ready(function() {
 // rejestruj zmienne (czy w ogóle potrzebne?)
 var lat;
 var lon;
-var typlokalizacji;
 
 $('#przeslijprzycisk').attr("disabled","disabled");
 
@@ -36,13 +35,16 @@ function wlasneMiasto() {
 			 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
 
 			 			//określ typ lokalizacji;
-						typlokalizacji = "ręczna";
-						console.log(typlokalizacji);
+						$("#dbgeoloctype").val("ręczna");
 
 				 		var place = autocomplete.getPlace();
 				 		var lat = place.geometry.location.k;
 				 		var lon = place.geometry.location.B;
 				 		liczDystans(lat,lon);
+
+						// przypisz koordynaty do rekordu bazy
+						$("#dbgeoszerokosc").val(lat);
+						$("#dbgeowysokosc").val(lon);
 		  		}
 		);
 }
@@ -89,8 +91,7 @@ function lokalizacja_blad(error) {
 function lokalizacja_ok(position) {
 
 		//określ typ lokalizacji;
-		typlokalizacji = "dokładna";
-		console.log(typlokalizacji);
+		$("#dbgeoloctype").val("dokładna");
 
 		// pobrane koordynaty od użytkownika
         var lat = position.coords.latitude;
@@ -101,6 +102,10 @@ function lokalizacja_ok(position) {
 
 		// dodatkowo wyświetl wykryte koordynaty
 		$("#twojeKoordynaty").html("(" + lat.toFixed(2) + ", " + lon.toFixed(2) + ")");
+
+		// przypisz koordynaty do rekordu bazy
+		$("#dbgeoszerokosc").val(lat);
+		$("#dbgeowysokosc").val(lon);
 
 }
 
@@ -113,8 +118,7 @@ function lokalizacja_ok(position) {
 function getLocationFallback(){
 
 		//określ typ lokalizacji;
-		typlokalizacji = "przybliżona";
-		console.log(typlokalizacji);
+		$("#dbgeoloctype").val("przybliżona");
 
 		// dopisz że niedokładna lokalizacja
 		$(".przyblizona").html(" przybliżona ");
@@ -126,6 +130,10 @@ function getLocationFallback(){
 
 			    // pobierz źródło dla wykrytych koordynatów
 			    koordynatyNaMiasto(lat,lon);
+
+				// przypisz koordynaty do rekordu bazy
+				$("#dbgeoszerokosc").val(lat);
+				$("#dbgeowysokosc").val(lon);
 
 		});
 
@@ -146,6 +154,7 @@ function koordynatyNaMiasto(lat,lon) {
 		$.getJSON(jsonsrc).then(function(data) {
 			    var miasto = data.results[0].address_components[2].long_name;
 			    $("#twojeMiasto").html(miasto);
+			    $("#dbgeoloccity").val(miasto);
 		});
 
 		//a potem odpal przeliczanie odległości
@@ -224,8 +233,6 @@ function liczDystans(lat,lon) {
 
 
 }
-
-console.log(idwizyty);
 
 });
 }(jQuery));

@@ -18,36 +18,12 @@ defined('ABSPATH') or die();
 
 
 
-$idwizyty = bin2hex(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM));
-
-function utworz_ciastko() {
-	global $idwizyty;
-	if(isset($_COOKIE['ciastkoStatystyczne'])){
-		$cookie = $_COOKIE['ciastkoStatystyczne'];
-	}
-	else{
-		setcookie( 'ciastkoStatystyczne', $idwizyty, 2000000000);
-	}
-}
-add_action( 'init', 'utworz_ciastko' );
-
-zapisz_do_bazy('ipciastko');
-
-
-
-
-
-
-
-
 
 
 function rtgeoloc_add_scripts(){
-	global $idwizyty;
 	wp_register_script( 'rtgeoloc_script', plugins_url( '/script.js', __FILE__ ), array('jquery') );
 	wp_enqueue_script( 'rtgeoloc_script');
 	wp_localize_script( 'rtgeoloc_script', 'adresurl', get_bloginfo('url','display') );
-	wp_localize_script( 'rtgeoloc_script', 'idwizyty', $idwizyty );
 	wp_register_style( 'rtgeoloc_style', plugins_url( '/style.css', __FILE__ ), array(), 'all' );
 	wp_enqueue_style('rtgeoloc_style');
 	wp_register_script( 'google_places_script', 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&language=pl', array('jquery'));
@@ -123,6 +99,12 @@ function rtgeoloc_szkielet($atts) {
 			<form name="formularz" id="geoformularz" method="post" action="">
 				<textarea class="text-placowka" name="geoplace"></textarea>
 				<textarea class="text-placowka2" name="geoplace2"></textarea>
+
+				<input type="hidden" id="dbgeoloctype" name="dbgeoloctype">
+				<input type="hidden" id="dbgeoloccity" name="dbgeoloccity">
+				<input type="hidden" id="dbgeoszerokosc" name="dbgeoszerokosc">
+				<input type="hidden" id="dbgeowysokosc" name="dbgeowysokosc">
+
 
 				<span><b>Pobierz naszą wizytówkę</b><BR /></span>
 				<label class="geoimielabel">
@@ -330,9 +312,10 @@ function rttheme_geo_instalacja () {
 	  		numer mediumint(9) NOT NULL AUTO_INCREMENT,
 	  		ip varchar(45) NOT NULL,
 	  		czas datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-	  		lokalizacja ENUM ('l0','l1','l2'),
+	  		lokalizacja varchar(20),
 	  		miasto varchar(50),
-	  		wojewodztwo ENUM ('w0','w1','w2','w3','w4','w5','w6','w7','w8','w9','w10','w11','w12','w13','w14','w15'),
+	  		szerokosc_geograficzna varchar(20),
+	  		wysokosc_geograficzna varchar(20),
 	  		imie varchar(25),
 	  		email varchar(60),
 	  		hash varchar(50),
@@ -341,30 +324,6 @@ function rttheme_geo_instalacja () {
 
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	dbDelta($sql);
-	/*
-	lokalizacja ENUM:
-	0 = automatyczna
-	1 = przybliżona
-	2 = ręczna
-
-	województwo ENUM:
-	0 = Dolnośląskie
-	1 = Kujawsko-pomorskie
-	2 = Lubelskie
-	3 = Lubuskie
-	4 = Łódzkie
-	5 = Małopolskie
-	6 = Mazowieckie
-	7 = Opolskie
-	8 = Podkarpackie
-	9 = Podlaskie
-	10 = Pomorskie
-	11 = Śląskie
-	12 = Świętokrzyskie
-	13 = Warmińsko-mazurskie
-	14 = Wielkopolskie
-	15 = Zachodniopomorskie
-	*/
 }
 // wykonaj przy aktywacji
 register_activation_hook( __FILE__, 'rttheme_geo_instalacja' );
@@ -385,24 +344,15 @@ function rttheme_geo_testdata () {
 	global $wpdb;
 	$tablica_statystyk = $wpdb->prefix."rgfstatystyki";
 
-	$temp0 = date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) );
-	$temp1 = '0';
-	$temp2 = 'Bydgoszcz';
-	$temp3 = '1';
-	$temp4 = 'Paweł';
-	$temp5 = 'pawel@rubycon.pl';
-	$temp6 = '271cdd4282a1b0fbe6fb245825dfa90ed664f4c5968f';
+	$temp0 = 'OK';
+	$temp1 = date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) );
+
 
 	$wpdb->insert(
 		$tablica_statystyk,
 		array (
-			'czas' => 			$temp0,
-			'lokalizacja' => 	$temp1,
-			'miasto' => 		$temp2,
-			'wojewodztwo' => 	$temp3,
-			'imie' => 			$temp4,
-			'email' => 			$temp5,
-			'hash' => 			$temp6,
+			'ip' => 			$temp0,
+			'czas' => 			$temp1,
 			)
 		);
 }
@@ -418,34 +368,35 @@ register_activation_hook( __FILE__, 'rttheme_geo_testdata' );
 
 
 
-function zapisz_do_bazy($zapisywanie) {
+function zapisz_do_bazy() {
+
+	$idgoscia = NULL;
+	if(!isset($_COOKIE['ciastkoStatystyczne'])) setcookie( 'ciastkoStatystyczne', bin2hex(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM)), 2000000000);
+	if(isset($_COOKIE['ciastkoStatystyczne'])) $idgoscia = $_COOKIE['ciastkoStatystyczne'];
 
 	require_once(ABSPATH . 'wp-config.php');
 
 	global $wpdb;
 	$tablica_statystyk = $wpdb->prefix."rgfstatystyki";
 
-	switch ($zapisywanie) {
-		case 'ipciastko':
-			$wpdb->insert(
-				$tablica_statystyk,
-				array (
-					'ip' =>				$_SERVER['REMOTE_ADDR'],
-					'hash' => 			$_COOKIE['ciastkoStatystyczne']
-					)
-				);
-			break;
-		case 'daneosobiste':
-			$wpdb->insert(
-				$tablica_statystyk,
-				array (
-					'imie' =>			$_POST['geoimie'],
-					'email' => 			$_POST['geoemail']
-					)
-				);
-			break;
-	}
+
+	$wpdb->insert(
+		$tablica_statystyk,
+		array (
+			'ip' =>								$_SERVER['REMOTE_ADDR'],
+			'czas' =>							date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ),
+			'lokalizacja' =>					$_POST['dbgeoloctype'],
+			'miasto' =>							$_POST['dbgeoloccity'],
+			'szerokosc_geograficzna' =>			$_POST['dbgeoszerokosc'],
+			'wysokosc_geograficzna' =>			$_POST['dbgeowysokosc'],
+			'imie' =>							$_POST['geoimie'],
+			'email' => 							$_POST['geoemail'],
+			'hash' => 							$idgoscia
+			)
+		);
+
 }
+
 
 
 
