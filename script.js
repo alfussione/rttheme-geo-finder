@@ -35,16 +35,30 @@ function wlasneMiasto() {
 			 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
 
 			 			//określ typ lokalizacji;
+						$("#twojaLokalizacja").html("Wybrana lokalizacja:<br />");
+						$("#twojeKoordynaty").html("");
 						$("#dbgeoloctype").val("ręczna");
+
 
 				 		var place = autocomplete.getPlace();
 				 		var lat = place.geometry.location.k;
 				 		var lon = place.geometry.location.B;
-				 		liczDystans(lat,lon);
+				 		
+				 		for (var przejdz1 = 0; przejdz1 < place.address_components.length; przejdz1++) {
+				 			if (place.address_components[przejdz1].types[0] == 'administrative_area_level_1') {
+				 				$("#dbgeolocstate").val(place.address_components[przejdz1].long_name);
+				 			}
+				 		}
 
-						// przypisz koordynaty do rekordu bazy
-						$("#dbgeoszerokosc").val(lat);
-						$("#dbgeowysokosc").val(lon);
+				 		for (var przejdz2 = 0; przejdz2 < place.address_components.length; przejdz2++) {
+				 			if (place.address_components[przejdz2].types[0] == 'locality') {
+						 		$("#twojeMiasto").html(place.address_components[przejdz2].long_name);
+						 		$("#dbgeoloccity").val(place.address_components[przejdz2].long_name);
+				 			}
+				 		}
+
+				 		liczDystans(lat,lon);
+				 		
 		  		}
 		);
 }
@@ -103,9 +117,6 @@ function lokalizacja_ok(position) {
 		// dodatkowo wyświetl wykryte koordynaty
 		$("#twojeKoordynaty").html("(" + lat.toFixed(2) + ", " + lon.toFixed(2) + ")");
 
-		// przypisz koordynaty do rekordu bazy
-		$("#dbgeoszerokosc").val(lat);
-		$("#dbgeowysokosc").val(lon);
 
 }
 
@@ -131,10 +142,6 @@ function getLocationFallback(){
 			    // pobierz źródło dla wykrytych koordynatów
 			    koordynatyNaMiasto(lat,lon);
 
-				// przypisz koordynaty do rekordu bazy
-				$("#dbgeoszerokosc").val(lat);
-				$("#dbgeowysokosc").val(lon);
-
 		});
 
 }
@@ -152,9 +159,21 @@ function koordynatyNaMiasto(lat,lon) {
 
 		//wydrukuj miasto
 		$.getJSON(jsonsrc).then(function(data) {
-			    var miasto = data.results[0].address_components[2].long_name;
-			    $("#twojeMiasto").html(miasto);
-			    $("#dbgeoloccity").val(miasto);
+
+		 		for (var przejdz1 = 0; przejdz1 < data.results[0].address_components.length; przejdz1++) {
+		 			if (data.results[0].address_components[przejdz1].types[0] == 'administrative_area_level_1') {
+		 				$("#dbgeolocstate").val(data.results[0].address_components[przejdz1].long_name);
+		 			}
+		 		}
+
+		 		for (var przejdz2 = 0; przejdz2 < data.results[0].address_components.length; przejdz2++) {
+		 			if (data.results[0].address_components[przejdz2].types[0] == 'locality') {
+				 		$("#twojeMiasto").html(data.results[0].address_components[przejdz2].long_name);
+				 		$("#dbgeoloccity").val(data.results[0].address_components[przejdz2].long_name);
+		 			}
+		 		}
+
+
 		});
 
 		//a potem odpal przeliczanie odległości

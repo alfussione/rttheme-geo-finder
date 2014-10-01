@@ -71,7 +71,7 @@
 	background: #ccc;
 }
 
-#zaproszenie input[disabled=disabled] {
+.geoprzycisklabel input[disabled=disabled] {
 	opacity:0.5;
 }
 
@@ -113,4 +113,19 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 	header#header {
 		height:auto;
 	}
+}
+
+.geozgodalabel {
+	font-size:9px;
+	display:block;
+	clear:both;
+}
+#przeslij .geozgodalabel input {
+	width:auto;
+}
+
+#przeslij .geozgodalabel span {
+	position:relative;
+	top:-4px;
+	display:inline;
 }

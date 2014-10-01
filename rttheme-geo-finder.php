@@ -1,11 +1,11 @@
 <?php
 /**
 * Plugin Name: Rubycon: RT Theme 18 Geo Finder
-* Description: Przeszukuje templatki RT Theme 18 w poszukiwaniu danych klienta w postaci adresów i lokalizacji GPS placówek, ustala lokalizację odwiedzającego i wyświetla najbliższy punkt. Uruchamiane poprzez shortcode "[rtgeoloc]". Po dodaniu lub zmianie danych placówki należy jednorazowo wywołać funckję "zakoduj_placowki()" (rozwiązanie tymczasowe).
-* Version: 0.4a
+* Description: Przeszukuje templatki RT Theme 18 w poszukiwaniu danych klienta w postaci adresów i lokalizacji GPS placówek, ustala lokalizację odwiedzającego i wyświetla najbliższy punkt. Uruchamiane poprzez shortcode "[rtgeoloc]". Wtyczka wymaga obsługi JavaScript u odwiedzającego.
+* Version: 1.0
 * Author: Paweł Foryński
 * Author URI: http://rubycon.pl
-* License: no license
+* License: GNU GPL v2.0
 */
 
 defined('ABSPATH') or die();
@@ -102,9 +102,7 @@ function rtgeoloc_szkielet($atts) {
 
 				<input type="hidden" id="dbgeoloctype" name="dbgeoloctype">
 				<input type="hidden" id="dbgeoloccity" name="dbgeoloccity">
-				<input type="hidden" id="dbgeoszerokosc" name="dbgeoszerokosc">
-				<input type="hidden" id="dbgeowysokosc" name="dbgeowysokosc">
-
+				<input type="hidden" id="dbgeolocstate" name="dbgeolocstate">
 
 				<span><b>Pobierz naszą wizytówkę</b><BR /></span>
 				<label class="geoimielabel">
@@ -119,6 +117,11 @@ function rtgeoloc_szkielet($atts) {
 
 				<label class="geoprzycisklabel">
 				<input type="submit" value="prześlij" id="przeslijprzycisk">
+				</label>
+
+				<label class="geozgodalabel">
+				<input type="checkbox" value="zgoda" id="zgoda" checked="checked" disabled="disabled">
+				<span>wyrażam zgodę na przetwarzanie danych</span>
 				</label>
 			</form>
 		</div>
@@ -314,8 +317,7 @@ function rttheme_geo_instalacja () {
 	  		czas datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 	  		lokalizacja varchar(20),
 	  		miasto varchar(50),
-	  		szerokosc_geograficzna varchar(20),
-	  		wysokosc_geograficzna varchar(20),
+	  		wojewodztwo varchar(50),
 	  		imie varchar(25),
 	  		email varchar(60),
 	  		hash varchar(50),
@@ -387,8 +389,7 @@ function zapisz_do_bazy() {
 			'czas' =>							date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ),
 			'lokalizacja' =>					$_POST['dbgeoloctype'],
 			'miasto' =>							$_POST['dbgeoloccity'],
-			'szerokosc_geograficzna' =>			$_POST['dbgeoszerokosc'],
-			'wysokosc_geograficzna' =>			$_POST['dbgeowysokosc'],
+			'wojewodztwo' =>					$_POST['dbgeolocstate'],
 			'imie' =>							$_POST['geoimie'],
 			'email' => 							$_POST['geoemail'],
 			'hash' => 							$idgoscia
