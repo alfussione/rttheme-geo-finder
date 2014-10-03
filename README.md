@@ -6,6 +6,7 @@ WordPress plugin. Searches for RT Theme 18 template pages with specific map and 
 TODO:
 
 * check for approximate location and save in background
+* gps permission timeout
 * keep session and save changes to db record via ajax
 * consider multiple records for one user (location state change history)
 * redesign & ajax form submission
