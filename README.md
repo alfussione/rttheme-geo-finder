@@ -7,6 +7,7 @@ TODO:
 
 * Google Places loaded twice conflict resolver
 * check for approximate location and save in background
-* keep session and save changes to db via ajax
+* keep session and save changes to db record via ajax
+* consider multiple records for one user (location state change history)
 * hash id fix
 * redesign
