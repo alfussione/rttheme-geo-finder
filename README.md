@@ -8,7 +8,7 @@ TODO:
 * check for approximate location and save in background
 * keep session and save changes to db record via ajax
 * consider multiple records for one user (location state change history)
-* redesign
+* redesign & ajax form submission
 
 BUGS:
 
