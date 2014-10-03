@@ -5,9 +5,13 @@ WordPress plugin. Searches for RT Theme 18 template pages with specific map and 
 
 TODO:
 
-* Google Places loaded twice conflict resolver
 * check for approximate location and save in background
 * keep session and save changes to db record via ajax
 * consider multiple records for one user (location state change history)
-* hash id fix
 * redesign
+
+BUGS:
+
+* Google Places loaded twice conflict
+* hash not stored
+* form with errors sent to database
