@@ -1,8 +1,8 @@
 <?php
 /**
 * Plugin Name: Rubycon: RT Theme 18 Geo Finder
-* Description: Przeszukuje templatki RT Theme 18 w poszukiwaniu danych klienta w postaci adresów i lokalizacji GPS placówek, ustala lokalizację odwiedzającego i wyświetla najbliższy punkt. Uruchamiane poprzez shortcode "[rtgeoloc]". Wtyczka wymaga obsługi JavaScript u odwiedzającego.
-* Version: 1.0
+* Description: 1.0.1 FIX: SKRYPTY TYLKO NA STRONIE GŁÓWNEJ. Przeszukuje templatki RT Theme 18 w poszukiwaniu danych klienta w postaci adresów i lokalizacji GPS placówek, ustala lokalizację odwiedzającego i wyświetla najbliższy punkt. Uruchamiane poprzez shortcode "[rtgeoloc]". Wtyczka wymaga obsługi JavaScript u odwiedzającego.
+* Version: 1.0.1
 * Author: Paweł Foryński
 * Author URI: http://rubycon.pl
 * License: GNU GPL v2.0
@@ -21,24 +21,28 @@ defined('ABSPATH') or die();
 
 
 function rtgeoloc_add_scripts(){
-	wp_register_script( 'rtgeoloc_script', plugins_url( '/script.js', __FILE__ ), array('jquery') );
-	wp_enqueue_script( 'rtgeoloc_script');
-	wp_localize_script( 'rtgeoloc_script', 'adresurl', get_bloginfo('url','display') );
-	wp_register_style( 'rtgeoloc_style', plugins_url( '/style.css', __FILE__ ), array(), 'all' );
-	wp_enqueue_style('rtgeoloc_style');
-	wp_register_script( 'google_places_script', 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&language=pl', array('jquery'));
-	wp_enqueue_script( 'google_places_script');
+	if(is_front_page()) {
+		wp_register_script( 'rtgeoloc_script', plugins_url( '/script.js', __FILE__ ), array('jquery') );
+		wp_enqueue_script( 'rtgeoloc_script');
+		wp_localize_script( 'rtgeoloc_script', 'adresurl', get_bloginfo('url','display') );
+		wp_register_style( 'rtgeoloc_style', plugins_url( '/style.css', __FILE__ ), array(), 'all' );
+		wp_enqueue_style('rtgeoloc_style');
+		wp_register_script( 'google_places_script', 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&language=pl', array('jquery'));
+		wp_enqueue_script( 'google_places_script');
+	}
 }
 // dodaj wymagane pliki do head
 add_action( 'wp_enqueue_scripts', 'rtgeoloc_add_scripts' );
 
 
 
-
-
-
-
-
+function bez_gplaces_poza_frontem() {
+	if ( !is_front_page() ) {
+		remove_action( 'wp_register_script', 'google_places_script' );
+		remove_action( 'wp_enqueue_scripts', 'google_places_script' );
+	}
+}
+add_action( 'get_header', 'bez_gplaces_poza_frontem' );
 
 
 // start drukowania szkieletu (pamiętaj żeby wywołać)
@@ -397,6 +401,7 @@ function zapisz_do_bazy() {
 		);
 
 }
+
 
 
 

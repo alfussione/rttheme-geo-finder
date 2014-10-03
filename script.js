@@ -29,10 +29,10 @@ wlasneMiasto();
 
 // wyszukiwanie lokacji z podpowiedziami google
 function wlasneMiasto() {
-	  	autocomplete = new google.maps.places.Autocomplete(
+	  	autouzupelnianie = new google.maps.places.Autocomplete(
 			    (document.getElementById('wlasnemiasto')),
 			    { types: ['(cities)'],componentRestrictions: {country: "pl"} });
-			 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
+			 	google.maps.event.addListener(autouzupelnianie, 'place_changed', function() {
 
 			 			//określ typ lokalizacji;
 						$("#twojaLokalizacja").html("Wybrana lokalizacja:<br />");
@@ -40,7 +40,7 @@ function wlasneMiasto() {
 						$("#dbgeoloctype").val("ręczna");
 
 
-				 		var place = autocomplete.getPlace();
+				 		var place = autouzupelnianie.getPlace();
 				 		var lat = place.geometry.location.k;
 				 		var lon = place.geometry.location.B;
 				 		
