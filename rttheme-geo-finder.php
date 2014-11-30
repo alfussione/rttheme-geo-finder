@@ -1,8 +1,8 @@
 <?php
 /**
-* Plugin Name: Rubycon: RT Theme 18 Geo Finder
-* Description: 1.0.1 FIX: SKRYPTY TYLKO NA STRONIE GŁÓWNEJ. Przeszukuje templatki RT Theme 18 w poszukiwaniu danych klienta w postaci adresów i lokalizacji GPS placówek, ustala lokalizację odwiedzającego i wyświetla najbliższy punkt. Uruchamiane poprzez shortcode "[rtgeoloc]". Wtyczka wymaga obsługi JavaScript u odwiedzającego.
-* Version: 1.0.1
+* Plugin Name: Rubycon: SLIMAK GEO FINDER
+* Description: 1.1.0 FIX: SKRYPTY TYLKO NA STRONIE GŁÓWNEJ. Przeszukuje templatki RT Theme 18 w poszukiwaniu danych klienta w postaci adresów i lokalizacji GPS placówek, ustala lokalizację odwiedzającego i wyświetla najbliższy punkt. Uruchamiane poprzez shortcode "[rtgeoloc]". Wtyczka wymaga obsługi JavaScript u odwiedzającego.
+* Version: 1.1.0
 * Author: Paweł Foryński
 * Author URI: http://rubycon.pl
 * License: GNU GPL v2.0
